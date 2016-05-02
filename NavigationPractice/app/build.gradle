@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "app.com.joel.statechamps"
+        applicationId "app.com.joel.navigationpractice"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
@@ -23,13 +23,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:percent:23.1.0'
-    compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.4'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:design:23.2.1'
 }
-
-repositories {
-    maven { url 'http://repo1.maven.org/maven2' }
-}
-
-

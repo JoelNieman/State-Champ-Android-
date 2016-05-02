@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StateChamps!</string>
+    <string name="action_settings">Action Settings</string>
+
 </resources>
