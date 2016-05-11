@@ -13,14 +13,10 @@ import app.com.joel.statechamps.Tabs.VideosTab;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[];
-    int NumbOfTabs;
 
-    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
+
+    public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-
-        this.Titles = mTitles;
-        this.NumbOfTabs = mNumbOfTabs;
     }
 
     @Override
@@ -38,14 +34,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        return Titles[position];
-    }
-
-
-    @Override
     public int getCount(){
-        return NumbOfTabs;
+        return 3;
     }
 
 }
