@@ -22,16 +22,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        setUpTabs();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         toolbar.setTitle("Articles");
         toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
         setSupportActionBar(toolbar);
 
+        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
+
+    public void setUpTabs() {
         final TabLayout.Tab articles = tabLayout.newTab();
         final TabLayout.Tab videos = tabLayout.newTab();
         final TabLayout.Tab social = tabLayout.newTab();
@@ -43,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(articles, 0);
         tabLayout.addTab(videos, 1);
         tabLayout.addTab(social, 2);
-
-        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -101,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
 }

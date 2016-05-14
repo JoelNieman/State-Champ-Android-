@@ -12,7 +12,7 @@ import app.com.joel.statechamps.R;
 /**
  * Created by Joel on 5/10/16.
  */
-public class ArticlesTab extends Fragment {
+public class ArticlesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -12,11 +12,11 @@ import app.com.joel.statechamps.R;
 /**
  * Created by Joel on 5/10/16.
  */
-public class VideosTab extends Fragment {
+public class SocialFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.videos_tab, container, false);
+        View v = inflater.inflate(R.layout.social_tab, container, false);
         return v;
     }
 }

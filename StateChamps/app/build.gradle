@@ -16,6 +16,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
     }
 }
 
@@ -26,6 +29,7 @@ dependencies {
     compile 'com.android.support:percent:23.1.0'
     compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.4'
     compile 'com.android.support:design:23.3.0'
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
 }
 
 repositories {
