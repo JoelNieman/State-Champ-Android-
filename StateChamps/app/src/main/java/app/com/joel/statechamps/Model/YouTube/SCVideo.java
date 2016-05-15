@@ -6,7 +6,6 @@ package app.com.joel.statechamps.Model.YouTube;
 public class SCVideo {
 
     private String title;
-    private String description;
     private String publishedDate;
     private String videoID;
     private String thumbnailURL;
@@ -17,14 +16,6 @@ public class SCVideo {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getPublishedDate() {

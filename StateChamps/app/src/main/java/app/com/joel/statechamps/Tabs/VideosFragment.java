@@ -33,7 +33,6 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
         FragmentManager fm = getChildFragmentManager();
 
         youTubePlayerFragment = youTubePlayerFragment.newInstance();
-//        dummyFragment = new DummyFragment();
         videoListFragment = new VideoListFragment();
 
         FragmentTransaction transaction1 = fm.beginTransaction();
@@ -63,4 +62,6 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
         Toast.makeText(getContext(), "YouTubePlayer failed to initialize", Toast.LENGTH_SHORT).show();
     }
+
+
 }

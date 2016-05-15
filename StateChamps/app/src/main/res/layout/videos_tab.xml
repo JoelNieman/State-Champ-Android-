@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list_frame"
-        android:background="@color/SCGrayColor"
         android:layout_below="@id/player_frame" />
 
 

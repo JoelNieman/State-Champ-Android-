@@ -29,25 +29,22 @@ public class SCVideoStore {
     private SCVideoStore(Context context){
 
         video1 = new SCVideo();
-        video1.setTitle("All Night Long (All Night)");
-        video1.setVideoID("nqAvFx3NxUM");
-        video1.setDescription("");
-        video1.setPublishedDate("");
-        video1.setThumbnailURL("");
+        video1.setTitle("State Champs! - May 8th, 2016 Show");
+        video1.setVideoID("l9x3C6kF-zQ");
+        video1.setPublishedDate("2016-05-09T12:35:41.000Z");
+        video1.setThumbnailURL("https://i.ytimg.com/vi/l9x3C6kF-zQ/default.jpg");
 
         video2 = new SCVideo();
-        video2.setTitle("Say You, Say Me");
+        video2.setTitle("State Champs! High School Sports Show - May 1st, 2016 Show");
         video2.setVideoID("we0mk_J0zyc");
-        video2.setDescription("");
-        video2.setPublishedDate("");
-        video2.setThumbnailURL("");
+        video2.setPublishedDate("2016-05-09T12:35:41.000Z");
+        video2.setThumbnailURL("https://i.ytimg.com/vi/Ed-GmaTnywM/default.jpg");
 
         video3 = new SCVideo();
-        video3.setTitle("Running With The Night");
+        video3.setTitle("State Champs! - April 24th, 2016 Show");
         video3.setVideoID("6PnhlXLHKAE");
-        video3.setDescription("");
-        video3.setPublishedDate("");
-        video3.setThumbnailURL("");
+        video3.setPublishedDate("2016-04-25T16:07:52.000Z");
+        video3.setThumbnailURL("https://i.ytimg.com/vi/UgBpAegPrtM/default.jpg");
 
         mSCVideosList = new ArrayList<>();
         mSCVideosList.add(video1);

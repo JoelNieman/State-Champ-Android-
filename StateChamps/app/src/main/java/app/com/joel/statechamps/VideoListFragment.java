@@ -1,5 +1,8 @@
 package app.com.joel.statechamps;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,12 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import app.com.joel.statechamps.Model.YouTube.OnResponse;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
 import app.com.joel.statechamps.Model.YouTube.SCVideoStore;
+import app.com.joel.statechamps.Model.YouTube.YouTubeAPICall;
 
 /**
  * Created by Joel on 5/14/16.
@@ -23,6 +30,11 @@ public class VideoListFragment extends Fragment {
     private RecyclerView mSCVideoRecyclerView;
     private VideoAdapter mAdapter;
     private List<SCVideo> mSCVideos;
+    private ImageDownloader imageDownloader;
+    private YouTubeAPICall youTubeAPICall;
+    private OnResponse handler;
+
+    private String endpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=4&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,10 +43,25 @@ public class VideoListFragment extends Fragment {
         mSCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
         mSCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+//        imageDownloader = new ImageDownloader();
+
         updateUI();
 
         return v;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        youTubeAPICall = new YouTubeAPICall(endpoint, handler);
+
+        if (isNetworkEnabled(getContext())) {
+            youTubeAPICall.execute();
+        } else {
+            Toast.makeText(getActivity(), "network not enabled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
     private void updateUI() {
@@ -51,29 +78,35 @@ public class VideoListFragment extends Fragment {
 
     private class VideoHolder extends RecyclerView.ViewHolder {
         private TextView mTitleTextView;
+        private ImageView mImageView;
         private SCVideo mSCVideo;
+
 
         public VideoHolder(View itemView) {
             super(itemView);
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.video_title);
+            mImageView = (ImageView) itemView.findViewById(R.id.thumbnail_image_view);
+
+
         }
 
         public void bindSCVideo(SCVideo video) {
             mSCVideo = video;
-            mTitleTextView.setText(mSCVideo.getTitle());
-        }
 
+            mTitleTextView.setText(mSCVideo.getTitle());
+
+//            imageDownloader.DownloadImageTask(mImageView);
+//            imageDownloader.onPostExecute(imageDownloader.doInBackground(mSCVideo.getThumbnailURL()));
+
+//            imageDownloader.DownloadImageTask(mImageView).execute(mSCVideo.getThumbnailURL());
+
+        }
     }
 
 
 
-
-
-
-
     private class VideoAdapter extends RecyclerView.Adapter<VideoHolder> {
-
 
 
         public VideoAdapter(List<SCVideo> videos) {
@@ -100,6 +133,19 @@ public class VideoListFragment extends Fragment {
         public int getItemCount() {
             return mSCVideos.size();
         }
+    }
+
+
+    public static boolean isNetworkEnabled(Context context) {
+        boolean available = false;
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+        if (manager != null) {
+            NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                available = networkInfo.isAvailable();
+                Toast.makeText(context, "network is enabled", Toast.LENGTH_SHORT).show();
+            }
+        } return available;
     }
 
 }
