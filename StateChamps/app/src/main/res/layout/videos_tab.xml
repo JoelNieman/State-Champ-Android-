@@ -5,18 +5,16 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/playerFrame"
+        android:id="@+id/player_frame"
         android:layout_alignParentTop="true"
-        android:layout_above="@id/textView" />
+        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="You Are In the Videos Tab"
-        android:id="@+id/textView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list_frame"
+        android:background="@color/SCGrayColor"
+        android:layout_below="@id/player_frame" />
 
 
 
