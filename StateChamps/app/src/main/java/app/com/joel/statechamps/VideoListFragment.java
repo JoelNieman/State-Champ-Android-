@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import app.com.joel.statechamps.Model.YouTube.OnResponse;
+import app.com.joel.statechamps.Model.YouTube.APIOnResponseDelegate;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
 import app.com.joel.statechamps.Model.YouTube.SCVideoStore;
 import app.com.joel.statechamps.Model.YouTube.YouTubeAPICall;
@@ -25,16 +25,25 @@ import app.com.joel.statechamps.Model.YouTube.YouTubeAPICall;
  * Created by Joel on 5/14/16.
  */
 
-public class VideoListFragment extends Fragment {
+public class VideoListFragment extends Fragment implements APIOnResponseDelegate {
 
     private RecyclerView mSCVideoRecyclerView;
     private VideoAdapter mAdapter;
     private List<SCVideo> mSCVideos;
     private ImageDownloader imageDownloader;
-    private YouTubeAPICall youTubeAPICall;
-    private OnResponse handler;
 
-    private String endpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=4&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
+    private YouTubeAPICall showsAPICall;
+
+    private String showsEndpoint;
+
+    private YouTubeAPICall highlightsAPICall;
+    private String highlightsEndpoint;
+
+    private APIOnResponseDelegate handler;
+
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +54,9 @@ public class VideoListFragment extends Fragment {
 
 //        imageDownloader = new ImageDownloader();
 
+        showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
+
+
         updateUI();
 
         return v;
@@ -53,15 +65,25 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        youTubeAPICall = new YouTubeAPICall(endpoint, handler);
+        showsAPICall = new YouTubeAPICall(showsEndpoint, this);
 
         if (isNetworkEnabled(getContext())) {
-            youTubeAPICall.execute();
+            showsAPICall.execute();
         } else {
             Toast.makeText(getActivity(), "network not enabled", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    public void onPreStart() {
+        handler.onPreStart();
+    }
+
+//    @Override
+//    public void onShowVideoResponse(JSONArray response) {
+//        handler.onShowVideoResponse(response);
+//        Toast.makeText(getActivity(), "The Shows APICall was successful",Toast.LENGTH_SHORT).show();
+//    }
 
 
     private void updateUI() {
@@ -71,9 +93,6 @@ public class VideoListFragment extends Fragment {
         mAdapter = new VideoAdapter(videos);
         mSCVideoRecyclerView.setAdapter(mAdapter);
     }
-
-
-
 
 
     private class VideoHolder extends RecyclerView.ViewHolder {
