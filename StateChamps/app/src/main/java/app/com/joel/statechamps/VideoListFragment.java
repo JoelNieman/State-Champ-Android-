@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,18 +16,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.youtube.player.YouTubePlayer;
+
 import java.util.ArrayList;
 
 import app.com.joel.statechamps.Model.YouTube.APIOnResponseDelegate;
 import app.com.joel.statechamps.Model.YouTube.OnImageDownloadDelegate;
+import app.com.joel.statechamps.Model.YouTube.OnVideoSelectedDelegate;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
 import app.com.joel.statechamps.Model.YouTube.YouTubeAPICall;
+import app.com.joel.statechamps.Tabs.VideosFragment;
 
 /**
  * Created by Joel on 5/14/16.
  */
 
 public class VideoListFragment extends Fragment implements APIOnResponseDelegate, OnImageDownloadDelegate {
+
+    private static final String VIDEO_ID = "video_id";
 
     private RecyclerView sCVideoRecyclerView;
     private VideoAdapter adapter;
@@ -38,6 +45,10 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private YouTubeAPICall highlightsAPICall;
     private String highlightsEndpoint;
     private APIOnResponseDelegate handler;
+    private VideosFragment playerFragment;
+    private YouTubePlayer youTubePlayer;
+    private Bundle args;
+
 
 
 
@@ -47,10 +58,13 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.videos_list, container, false);
 
+        args = new Bundle();
+
         sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
         sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
+
 
         return v;
     }
@@ -106,6 +120,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         private ImageView mImageView;
         private SCVideo mSCVideo;
         private Bitmap mBitmap;
+        private OnVideoSelectedDelegate clickHandler;
 
 
         public VideoHolder(View itemView) {
@@ -128,6 +143,15 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         @Override
         public void onClick(View v) {
 
+            String videoToPass = mSCVideo.getVideoID();
+            FragmentManager fragmentManager = getFragmentManager();
+            VideosFragment.YouTubePlayerFragment videosFragment = (VideosFragment.YouTubePlayerFragment) fragmentManager.findFragmentByTag("YOUTUBE_PLAYER_FRAGMENT");
+            Toast.makeText(getActivity(), "Touched" + videoToPass, Toast.LENGTH_SHORT).show();
+
+            if (videosFragment != null) {
+                videosFragment.onVideoSelected(videoToPass);
+
+            }
         }
     }
 
@@ -165,8 +189,6 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             return sCVideoStore.size();
         }
     }
-
-
 
 
     public static boolean isNetworkEnabled(Context context) {
