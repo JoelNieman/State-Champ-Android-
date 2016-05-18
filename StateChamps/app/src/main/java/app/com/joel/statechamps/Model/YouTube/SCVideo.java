@@ -41,4 +41,5 @@ public class SCVideo {
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
+
 }

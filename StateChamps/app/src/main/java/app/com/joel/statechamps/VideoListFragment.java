@@ -1,6 +1,7 @@
 package app.com.joel.statechamps;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,31 +15,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import app.com.joel.statechamps.Model.YouTube.APIOnResponseDelegate;
+import app.com.joel.statechamps.Model.YouTube.OnImageDownloadDelegate;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
-import app.com.joel.statechamps.Model.YouTube.SCVideoStore;
 import app.com.joel.statechamps.Model.YouTube.YouTubeAPICall;
 
 /**
  * Created by Joel on 5/14/16.
  */
 
-public class VideoListFragment extends Fragment implements APIOnResponseDelegate {
+public class VideoListFragment extends Fragment implements APIOnResponseDelegate, OnImageDownloadDelegate {
 
-    private RecyclerView mSCVideoRecyclerView;
-    private VideoAdapter mAdapter;
-    private List<SCVideo> mSCVideos;
+    private RecyclerView sCVideoRecyclerView;
+    private VideoAdapter adapter;
+    private ArrayList<SCVideo> sCVideoStore;
+    private ArrayList<Bitmap> imageStore;
     private ImageDownloader imageDownloader;
-
     private YouTubeAPICall showsAPICall;
-
     private String showsEndpoint;
-
     private YouTubeAPICall highlightsAPICall;
     private String highlightsEndpoint;
-
     private APIOnResponseDelegate handler;
 
 
@@ -49,15 +47,10 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.videos_list, container, false);
 
-        mSCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
-        mSCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-//        imageDownloader = new ImageDownloader();
+        sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
+        sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
-
-
-        updateUI();
 
         return v;
     }
@@ -79,57 +72,74 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         handler.onPreStart();
     }
 
-//    @Override
-//    public void onShowVideoResponse(JSONArray response) {
-//        handler.onShowVideoResponse(response);
-//        Toast.makeText(getActivity(), "The Shows APICall was successful",Toast.LENGTH_SHORT).show();
-//    }
-
-
-    private void updateUI() {
-        SCVideoStore videoStore = SCVideoStore.getSCVideoStore(getActivity());
-        List<SCVideo> videos = videoStore.getSCVideosList();
-
-        mAdapter = new VideoAdapter(videos);
-        mSCVideoRecyclerView.setAdapter(mAdapter);
+    @Override
+    public void onShowVideoResponse(ArrayList<SCVideo> sCVideoStore) {
+        this.sCVideoStore = sCVideoStore;
+        imageDownloader = new ImageDownloader(sCVideoStore, this);
+        imageDownloader.execute();
+        Toast.makeText(getActivity(), "The Shows APICall was successful",Toast.LENGTH_SHORT).show();
     }
 
 
-    private class VideoHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onHighlightVideoResponse(ArrayList<SCVideo> highlights) {
+
+    }
+
+    @Override
+    public void onImageDownload(ArrayList<Bitmap> myBitmaps) {
+        this.imageStore = myBitmaps;
+        updateUI();
+    }
+
+
+    private void updateUI() {
+        adapter = new VideoAdapter(this.sCVideoStore, this.imageStore);
+        sCVideoRecyclerView.setAdapter(adapter);
+    }
+
+
+
+
+    private class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitleTextView;
         private ImageView mImageView;
         private SCVideo mSCVideo;
+        private Bitmap mBitmap;
 
 
         public VideoHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.video_title);
             mImageView = (ImageView) itemView.findViewById(R.id.thumbnail_image_view);
 
-
         }
 
-        public void bindSCVideo(SCVideo video) {
+        public void bindSCVideo(SCVideo video, Bitmap image) {
             mSCVideo = video;
+            mBitmap = image;
 
             mTitleTextView.setText(mSCVideo.getTitle());
+            mImageView.setImageBitmap(mBitmap);
+        }
 
-//            imageDownloader.DownloadImageTask(mImageView);
-//            imageDownloader.onPostExecute(imageDownloader.doInBackground(mSCVideo.getThumbnailURL()));
-
-//            imageDownloader.DownloadImageTask(mImageView).execute(mSCVideo.getThumbnailURL());
+        @Override
+        public void onClick(View v) {
 
         }
     }
+
 
 
 
     private class VideoAdapter extends RecyclerView.Adapter<VideoHolder> {
 
 
-        public VideoAdapter(List<SCVideo> videos) {
-            mSCVideos = videos;
+        public VideoAdapter(ArrayList<SCVideo> videos, ArrayList<Bitmap> images) {
+            sCVideoStore = videos;
+            imageStore = images;
         }
 
 
@@ -143,16 +153,20 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
         @Override
         public void onBindViewHolder(VideoHolder holder, int position) {
-            SCVideo video = mSCVideos.get(position);
-            holder.bindSCVideo(video);
+            SCVideo video = sCVideoStore.get(position);
+            Bitmap image = imageStore.get(position);
+
+            holder.bindSCVideo(video, image);
 
         }
 
         @Override
         public int getItemCount() {
-            return mSCVideos.size();
+            return sCVideoStore.size();
         }
     }
+
+
 
 
     public static boolean isNetworkEnabled(Context context) {
@@ -163,6 +177,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             if (networkInfo != null) {
                 available = networkInfo.isAvailable();
                 Toast.makeText(context, "network is enabled", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "network is not available", Toast.LENGTH_LONG).show();
             }
         } return available;
     }

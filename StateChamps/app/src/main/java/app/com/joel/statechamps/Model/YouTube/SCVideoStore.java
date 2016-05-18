@@ -20,9 +20,9 @@ public class SCVideoStore {
 
 
     public static SCVideoStore getSCVideoStore(Context context) {
-//        if (sSCVideoStore == null) {
+        if (sSCVideoStore == null) {
             sSCVideoStore = new SCVideoStore(context);
-//        }
+        }
         return sSCVideoStore;
     }
 

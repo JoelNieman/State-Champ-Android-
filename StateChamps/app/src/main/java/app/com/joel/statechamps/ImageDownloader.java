@@ -1,57 +1,58 @@
 package app.com.joel.statechamps;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
+import app.com.joel.statechamps.Model.YouTube.OnImageDownloadDelegate;
+import app.com.joel.statechamps.Model.YouTube.SCVideo;
 
 /**
  * Created by Joel on 5/15/16.
  */
-public class ImageDownloader extends AsyncTask<Void, Void, Bitmap> {
+public class ImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
 
-    private ImageView imageView;
-    private String url;
-    private Context context;
+    private ArrayList<SCVideo> videoArrayList;
+    private ArrayList<Bitmap> bitmapsArrayList;
+    private OnImageDownloadDelegate handler;
+    private Bitmap myBitmap;
 
-    public void DownloadImageTask(String url, ImageView imageView, Context context){
-        this.context = context;
-        this.url = url;
-        this.imageView = imageView;
+    public ImageDownloader(ArrayList<SCVideo> sCVideoStore, OnImageDownloadDelegate handler){
+        this.videoArrayList = sCVideoStore;
+        this.handler = handler;
 
-        Toast.makeText(context, "DownloadImageTask called", Toast.LENGTH_SHORT).show();
     }
 
-    public Bitmap doInBackground(Void... params) {
-        try {
-            URL urlConnection = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) urlConnection.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Toast.makeText(context, "doInBackground success", Toast.LENGTH_SHORT).show();
+    public ArrayList<Bitmap> doInBackground(Void... params) {
+        ArrayList<Bitmap> bitmapCollection = new ArrayList<>();
 
-            return myBitmap;
+        for (int i = 0; i < videoArrayList.size(); i++) {
+            try {
+                URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURL());
+                HttpURLConnection connection = (HttpURLConnection) urlConnection.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                myBitmap = BitmapFactory.decodeStream(input);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "doInBackground failure", Toast.LENGTH_SHORT).show();
+                bitmapCollection.add(myBitmap);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return bitmapCollection;
     }
 
     @Override
-    public void onPostExecute(Bitmap result) {
-        super.onPostExecute(result);
-        this.imageView.setImageBitmap(result);
-        Toast.makeText(context, "onPostExecute called", Toast.LENGTH_SHORT).show();
+    public void onPostExecute(ArrayList<Bitmap> result) {
+        this.bitmapsArrayList = result;
+        this.handler.onImageDownload(bitmapsArrayList);
     }
 
 }

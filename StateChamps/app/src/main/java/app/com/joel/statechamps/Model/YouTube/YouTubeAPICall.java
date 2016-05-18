@@ -13,39 +13,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import app.com.joel.statechamps.APIKeys;
-
 /**
  * Created by Joel on 4/28/16.
  */
-public class YouTubeAPICall extends AsyncTask <Void, Void, JSONArray> {
+public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
 
     public static final int METHOD_GET = 0;
     public static final int METHOD_POST = 1;
 
-    private String endpoint;
     private APIOnResponseDelegate handler;
     private int method;
     private ArrayList<SCVideo> sCVideoStore;
+    private ArrayList<SCVideo> parsedVideos;
     private JSONObject result;
-    private JSONArray resultJSONArray;
     private ArrayList<SCVideo> videoArray;
     private SCVideo sCVideo;
     private JSONObject sCVideoJSONObject;
     private JSONArray sCVideoJSONArray;
-
-
-    private String playlistID;
-    private int numberOfVideos;
-    private String apiKey;
-    private APIKeys keys = null;
+    private String endpoint;
 
 
 
     public YouTubeAPICall(String endpoint, APIOnResponseDelegate handler) {
-
-        if (keys == null) keys = new APIKeys();
-        apiKey = keys.getYouTubeApiKey();
         this.endpoint = endpoint;
         this.handler = handler;
         this.method = METHOD_GET;
@@ -57,25 +46,26 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, JSONArray> {
     }
 
     @Override
-    public JSONArray doInBackground(Void... params) {
-        JSONArray response = null;
+    public ArrayList<SCVideo> doInBackground(Void... params) {
+        ArrayList<SCVideo> videoStore = null;
         switch (this.method) {
             case METHOD_GET:
-                response = this.getRequest();
+                videoStore = this.getRequest();
                 break;
             case METHOD_POST:
                 break;
         }
-        return response;
+        return videoStore;
     }
 
     @Override
-    protected void onPostExecute(JSONArray response) {
-//        this.handler.onShowVideoResponse(response);
+    protected void onPostExecute(ArrayList<SCVideo> sCVideoStore) {
+        this.sCVideoStore = sCVideoStore;
+        this.handler.onShowVideoResponse(sCVideoStore);
     }
 
-    private JSONArray getRequest() {
-        resultJSONArray = null;
+    private ArrayList<SCVideo> getRequest() {
+        parsedVideos = null;
         result = null;
         HttpURLConnection connection = null;
 
@@ -95,7 +85,7 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, JSONArray> {
                 scanner.close();
 
                 result = new JSONObject(stringResult);
-                sCVideoStore = parseJSON(result);
+                parsedVideos = parseJSON(result);
 
             } else {
                 Log.d("** STATUS CODE **", "did not get 200");
@@ -105,13 +95,13 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, JSONArray> {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return resultJSONArray;
+        return parsedVideos;
     }
 
 
     protected ArrayList<SCVideo> parseJSON(JSONObject result) {
 
-        sCVideo = new SCVideo();
+
         videoArray = new ArrayList<>();
 
         try {
@@ -122,12 +112,25 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, JSONArray> {
 
         for (int i = 0; i < sCVideoJSONArray.length(); i++) {
             try {
+                sCVideo = new SCVideo();
                 sCVideoJSONObject = (JSONObject) sCVideoJSONArray.get(i);
                 JSONObject snippet = sCVideoJSONObject.optJSONObject("snippet");
+                JSONObject thumbnails = snippet.optJSONObject("thumbnails");
+                JSONObject defaultThumbnials = thumbnails.optJSONObject("default");
+                JSONObject resourceId = snippet.optJSONObject("resourceId");
+
                 String title = snippet.optString("title");
+                String publishedDate = snippet.optString("publishedAt");
+                String videoID = resourceId.optString("videoId");
+                String thumbnailURLString = defaultThumbnials.optString("url");
 
                 sCVideo.setTitle(title);
+                sCVideo.setPublishedDate(publishedDate);
+                sCVideo.setVideoID(videoID);
+                sCVideo.setThumbnailURL(thumbnailURLString);
+
                 videoArray.add(sCVideo);
+
 
                 System.out.println(sCVideo.getTitle());
 
