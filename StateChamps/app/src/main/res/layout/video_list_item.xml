@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/list_view_cell" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/thumbnail_image_view"
-        />
-
-    <TextView
+    <com.andexert.library.RippleView
+        android:id="@+id/ripple_view"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/video_title"
-        />
+        app:rv_color="@color/SCBlueColor"
+        app:rv_zoom="true"
+        app:rv_zoomDuration="150"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/thumbnail_image_view"
+            android:padding="6dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_title"
+            android:layout_toRightOf="@id/thumbnail_image_view"
+            android:padding="6dp"
+            />
+
+    </com.andexert.library.RippleView>
 
 
 </LinearLayout>

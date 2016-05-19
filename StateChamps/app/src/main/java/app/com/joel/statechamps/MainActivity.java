@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -14,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
+    private TabLayout.Tab articles;
+    private TabLayout.Tab videos;
+    private TabLayout.Tab social;
 
 
     @Override
@@ -21,39 +25,55 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+        Log.d("MainActivity", "onCreateView: called");
+
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        setUpTabs();
+        viewPager.setAdapter(viewPagerAdapter);
+        setSupportActionBar(toolbar);
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        toolbar.setTitle("Articles");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
+        Log.d("MainActivity", "onStart: called");
 
-        viewPager.setAdapter(viewPagerAdapter);
-        setSupportActionBar(toolbar);
 
-        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.d("MainActivity", "onResume: called");
+
+        toolbar.setTitle("Articles");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
+
+        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
+
+        if(articles == null) {
+            setUpTabs();
+        }
+
+        handleTabs();
+
+//        super.onResume();
     }
 
 
 
     public void setUpTabs() {
-        final TabLayout.Tab articles = tabLayout.newTab();
-        final TabLayout.Tab videos = tabLayout.newTab();
-        final TabLayout.Tab social = tabLayout.newTab();
+        articles = tabLayout.newTab();
+        videos = tabLayout.newTab();
+        social = tabLayout.newTab();
 
         articles.setIcon(R.drawable.ic_articles_light);
         videos.setIcon(R.drawable.ic_videos_dark);
@@ -62,7 +82,10 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(articles, 0);
         tabLayout.addTab(videos, 1);
         tabLayout.addTab(social, 2);
+    }
 
+
+    private void handleTabs() {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

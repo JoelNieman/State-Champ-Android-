@@ -9,14 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.youtube.player.YouTubePlayer;
+import com.andexert.library.RippleView;
 
 import java.util.ArrayList;
 
@@ -42,29 +44,30 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private ImageDownloader imageDownloader;
     private YouTubeAPICall showsAPICall;
     private String showsEndpoint;
-    private YouTubeAPICall highlightsAPICall;
-    private String highlightsEndpoint;
     private APIOnResponseDelegate handler;
-    private VideosFragment playerFragment;
-    private YouTubePlayer youTubePlayer;
-    private Bundle args;
-
-
-
-
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.videos_list, container, false);
 
-        args = new Bundle();
+        Log.d("VideoListFragment", "onCreateView: called");
 
-        sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
-        sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (sCVideoRecyclerView == null) {
+            sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
+            sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
+
 
         showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
 
+
+        if (isNetworkEnabled(getContext()) && (sCVideoStore == null)) {
+            showsAPICall = new YouTubeAPICall(showsEndpoint, this);
+            showsAPICall.execute();
+        } else {
+            Toast.makeText(getActivity(), "network not available", Toast.LENGTH_SHORT).show();
+        }
 
         return v;
     }
@@ -72,14 +75,15 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     @Override
     public void onStart() {
         super.onStart();
-        showsAPICall = new YouTubeAPICall(showsEndpoint, this);
-
-        if (isNetworkEnabled(getContext())) {
-            showsAPICall.execute();
-        } else {
-            Toast.makeText(getActivity(), "network not enabled", Toast.LENGTH_SHORT).show();
-        }
+        Log.d("VideoListFragment", "onStart: called");
     }
+
+    @Override
+    public void onResume() {
+        super.onStart();
+        Log.d("VideoListFragment", "onResume: called");
+    }
+
 
     @Override
     public void onPreStart() {
@@ -91,7 +95,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         this.sCVideoStore = sCVideoStore;
         imageDownloader = new ImageDownloader(sCVideoStore, this);
         imageDownloader.execute();
-        Toast.makeText(getActivity(), "The Shows APICall was successful",Toast.LENGTH_SHORT).show();
+
+        passVideo(sCVideoStore.get(0).getVideoID());
     }
 
 
@@ -115,18 +120,21 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
 
 
-    private class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class VideoHolder extends RecyclerView.ViewHolder {
         private TextView mTitleTextView;
         private ImageView mImageView;
+        private RippleView rippleView;
         private SCVideo mSCVideo;
         private Bitmap mBitmap;
+
         private OnVideoSelectedDelegate clickHandler;
+        private LinearLayout mListViewCell;
 
 
         public VideoHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
 
+            rippleView = (RippleView) itemView.findViewById(R.id.ripple_view);
             mTitleTextView = (TextView) itemView.findViewById(R.id.video_title);
             mImageView = (ImageView) itemView.findViewById(R.id.thumbnail_image_view);
 
@@ -140,21 +148,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             mImageView.setImageBitmap(mBitmap);
         }
 
-        @Override
-        public void onClick(View v) {
-
-            String videoToPass = mSCVideo.getVideoID();
-            FragmentManager fragmentManager = getFragmentManager();
-            VideosFragment.YouTubePlayerFragment videosFragment = (VideosFragment.YouTubePlayerFragment) fragmentManager.findFragmentByTag("YOUTUBE_PLAYER_FRAGMENT");
-            Toast.makeText(getActivity(), "Touched" + videoToPass, Toast.LENGTH_SHORT).show();
-
-            if (videosFragment != null) {
-                videosFragment.onVideoSelected(videoToPass);
-
-            }
-        }
     }
-
 
 
 
@@ -177,8 +171,14 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
         @Override
         public void onBindViewHolder(VideoHolder holder, int position) {
-            SCVideo video = sCVideoStore.get(position);
+            final SCVideo video = sCVideoStore.get(position);
             Bitmap image = imageStore.get(position);
+
+            holder.rippleView.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v) {
+                    passVideo(video.getVideoID());
+                }
+            });
 
             holder.bindSCVideo(video, image);
 
@@ -188,6 +188,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         public int getItemCount() {
             return sCVideoStore.size();
         }
+
     }
 
 
@@ -205,4 +206,14 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         } return available;
     }
 
+
+    private void passVideo(String videoID) {
+        String videoToPass = videoID;
+        FragmentManager fragmentManager = getFragmentManager();
+        VideosFragment.YouTubePlayerFragment videosFragment = (VideosFragment.YouTubePlayerFragment) fragmentManager.findFragmentByTag("YOUTUBE_PLAYER_FRAGMENT");
+
+        if (videosFragment != null) {
+            videosFragment.onVideoSelected(videoToPass);
+        }
+    }
 }

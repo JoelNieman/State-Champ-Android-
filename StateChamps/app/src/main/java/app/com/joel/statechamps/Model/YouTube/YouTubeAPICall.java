@@ -82,7 +82,7 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
                 InputStream stream = connection.getInputStream();
                 Scanner scanner = new Scanner(stream, "UTF-8").useDelimiter("\\A");
                 String stringResult = scanner.hasNext() ? scanner.next() : "";
-                System.out.println(stringResult);
+//                System.out.println(stringResult);
                 scanner.close();
 
                 result = new JSONObject(stringResult);
