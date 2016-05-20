@@ -7,9 +7,8 @@ import java.util.ArrayList;
 /**
  * Created by Joel on 5/17/16.
  */
-public interface OnImageDownloadDelegate {
+public interface OnShowImageDownloadDelegate {
 
-    public void onImageDownload(ArrayList<Bitmap> myBitmap);
-
+    public void onShowImageDownload(ArrayList<Bitmap> myBitmap);
 }
 

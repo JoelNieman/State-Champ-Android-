@@ -9,20 +9,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import app.com.joel.statechamps.Model.YouTube.OnImageDownloadDelegate;
+import app.com.joel.statechamps.Model.YouTube.OnShowImageDownloadDelegate;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
 
 /**
  * Created by Joel on 5/15/16.
  */
-public class ImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
+public class ShowsImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
 
     private ArrayList<SCVideo> videoArrayList;
     private ArrayList<Bitmap> bitmapsArrayList;
-    private OnImageDownloadDelegate handler;
+    private OnShowImageDownloadDelegate handler;
     private Bitmap myBitmap;
 
-    public ImageDownloader(ArrayList<SCVideo> sCVideoStore, OnImageDownloadDelegate handler){
+    public ShowsImageDownloader(ArrayList<SCVideo> sCVideoStore, OnShowImageDownloadDelegate handler){
         this.videoArrayList = sCVideoStore;
         this.handler = handler;
 
@@ -52,7 +52,8 @@ public class ImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
     @Override
     public void onPostExecute(ArrayList<Bitmap> result) {
         this.bitmapsArrayList = result;
-        this.handler.onImageDownload(bitmapsArrayList);
+        this.handler.onShowImageDownload(bitmapsArrayList);
     }
-
 }
+
+

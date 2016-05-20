@@ -65,6 +65,7 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
         this.handler.onShowVideoResponse(sCVideoStore);
     }
 
+
     private ArrayList<SCVideo> getRequest() {
         parsedVideos = null;
         result = null;
