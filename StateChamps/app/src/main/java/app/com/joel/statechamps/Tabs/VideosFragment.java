@@ -1,5 +1,6 @@
 package app.com.joel.statechamps.Tabs;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -39,6 +40,10 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
 
         if(youTubePlayer == null) {
             youTubePlayerFragment = new YouTubePlayerFragment();
+            FragmentTransaction transaction1 = fm.beginTransaction();
+            transaction1.replace(R.id.player_frame, youTubePlayerFragment, "YOUTUBE_PLAYER_FRAGMENT").commit();
+            youTubePlayerFragment.initialize("AIzaSyC2l7QsJ54_prbdqZlI1vtbRmBYYms8OVo", this);
+
         }
 
 
@@ -51,11 +56,13 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
 
 
 
-        FragmentTransaction transaction1 = fm.beginTransaction();
-        transaction1.replace(R.id.player_frame, youTubePlayerFragment, "YOUTUBE_PLAYER_FRAGMENT").commit();
 
 
-        youTubePlayerFragment.initialize("AIzaSyC2l7QsJ54_prbdqZlI1vtbRmBYYms8OVo", this);
+
+
+
+
+
 
         return v;
     }
@@ -69,6 +76,7 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
     @Override
     public void onResume() {
         super.onStart();
+
         Log.d("VideosFragment", "onResume: called");
     }
 
@@ -76,6 +84,22 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
         this.youTubePlayer = youTubePlayer;
+        youTubePlayer.setFullscreenControlFlags(youTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+//        youTubePlayer.addFullscreenControlFlag(youTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
+        this.youTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
+            @Override
+            public void onFullscreen(boolean b) {
+                if (b == true){
+                    Log.d("Player onFullScreen", "True");
+                } else {
+                    Log.d("Player onFullScreen", "False");
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+
+            }
+        });
+
+
         if (!wasRestored) {
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
         } else {
@@ -86,6 +110,12 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
         Toast.makeText(getContext(), "YouTubePlayer failed to initialize", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        youTubePlayer = null;
     }
 
 

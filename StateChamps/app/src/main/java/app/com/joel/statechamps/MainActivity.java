@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout.Tab articles;
     private TabLayout.Tab videos;
     private TabLayout.Tab social;
+    private int orientation;
+
 
 
     @Override
@@ -53,19 +56,20 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("MainActivity", "onResume: called");
 
-        toolbar.setTitle("Articles");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
+        orientation = getRequestedOrientation();
+        Toast.makeText(this, "The orientation is " +orientation, Toast.LENGTH_SHORT).show();
 
-        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
+        if (orientation == 1 && articles == null){
+            toolbar.setTitle("Articles");
+            toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
 
-        if(articles == null) {
+            tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+            tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
+
             setUpTabs();
+            handleTabs();
         }
 
-        handleTabs();
-
-//        super.onResume();
     }
 
 

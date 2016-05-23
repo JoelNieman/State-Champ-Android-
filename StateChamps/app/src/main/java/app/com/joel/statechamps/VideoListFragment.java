@@ -54,6 +54,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private String highlightsEndpoint;
     private APIOnResponseDelegate handler;
 
+    private Bundle bundle;
+
     private Button showsButton;
     private Button highlightsButton;
 
@@ -105,7 +107,9 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         });
 
         showsButton.setBackgroundColor(getResources().getColor(R.color.SCRedColor));
+        showsButton.setTextColor(getResources().getColor(R.color.WhiteColor));
         highlightsButton.setBackgroundColor(getResources().getColor(R.color.SCGrayColor));
+        highlightsButton.setTextColor(getResources().getColor(R.color.WhiteColor));
 
         if (sCVideoRecyclerView == null) {
             sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
@@ -139,6 +143,14 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         super.onStart();
         Log.d("VideoListFragment", "onResume: called");
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+
+    }
+
+    
 
 
     @Override
