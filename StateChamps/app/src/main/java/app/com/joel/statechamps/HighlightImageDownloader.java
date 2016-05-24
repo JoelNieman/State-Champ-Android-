@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import app.com.joel.statechamps.Model.YouTube.OnHighlightImageDownloadDelegate;
 import app.com.joel.statechamps.Model.YouTube.SCVideo;
 
-public class HighlightImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
+public class HighlightImageDownloader extends AsyncTask<ArrayList<SCVideo>, Void, ArrayList<SCVideo>> {
 
     private ArrayList<SCVideo> videoArrayList;
-    private ArrayList<Bitmap> bitmapsArrayList;
     private OnHighlightImageDownloadDelegate handler;
     private Bitmap myBitmap;
 
@@ -25,9 +24,7 @@ public class HighlightImageDownloader extends AsyncTask<Void, Void, ArrayList<Bi
 
     }
 
-    public ArrayList<Bitmap> doInBackground(Void... params) {
-        ArrayList<Bitmap> bitmapCollection = new ArrayList<>();
-
+    public ArrayList<SCVideo> doInBackground(ArrayList<SCVideo>... params) {
         for (int i = 0; i < videoArrayList.size(); i++) {
             try {
                 URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURL());
@@ -37,18 +34,18 @@ public class HighlightImageDownloader extends AsyncTask<Void, Void, ArrayList<Bi
                 InputStream input = connection.getInputStream();
                 myBitmap = BitmapFactory.decodeStream(input);
 
-                bitmapCollection.add(myBitmap);
+                videoArrayList.get(i).setThumbnailBitmap(myBitmap);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return bitmapCollection;
+        return videoArrayList;
     }
 
     @Override
-    public void onPostExecute(ArrayList<Bitmap> result) {
-        this.bitmapsArrayList = result;
-        this.handler.onHighlightImageDownload(bitmapsArrayList);
+    public void onPostExecute(ArrayList<SCVideo> sCHighlightVideos) {
+        this.videoArrayList = sCHighlightVideos;
+        this.handler.onHighlightImageDownload(videoArrayList);
     }
 }

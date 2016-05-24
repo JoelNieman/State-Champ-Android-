@@ -38,20 +38,23 @@ import app.com.joel.statechamps.Tabs.VideosFragment;
 public class VideoListFragment extends Fragment implements APIOnResponseDelegate, OnShowImageDownloadDelegate, OnHighlightImageDownloadDelegate {
 
     private static final String VIDEO_ID = "video_id";
+    private static final String SHOWS_VIDEO_STORE = "shows_video_store";
+    private static final String HIGHLIGHTS_VIDEO_STORE = "highlights_video_store";
 
     private RecyclerView sCVideoRecyclerView;
     private ShowsVideoAdapter showsAdapter;
     private HighlightsVideoAdapter highlightsAdapter;
     private ArrayList<SCVideo> sCShowsStore;
     private ArrayList<SCVideo> sCHighlightsStore;
-    private ArrayList<Bitmap> showsImageStore;
-    private ArrayList<Bitmap> highlightsImageStore;
+//    private ArrayList<Bitmap> showsImageStore;
+//    private ArrayList<Bitmap> highlightsImageStore;
     private ShowsImageDownloader showsImageDownloader;
     private HighlightImageDownloader highlightImageDownloader;
     private YouTubeAPICall showsAPICall;
     private String showsEndpoint;
     private YouTubeAPICall highlightsAPICall;
     private String highlightsEndpoint;
+    private String videoToPass;
     private APIOnResponseDelegate handler;
 
     private Bundle bundle;
@@ -65,9 +68,11 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         View v = inflater.inflate(R.layout.videos_list, container, false);
 
         Log.d("VideoListFragment", "onCreateView: called");
+        showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
+        highlightsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0BeICQ2C3hym16jEyj0SzSJ&maxResults=20&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
 
         showsButton = (Button) v.findViewById(R.id.shows_button);
-        showsButton.setOnClickListener(new View.OnClickListener(){
+        showsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showsButton.setBackgroundColor(getResources().getColor(R.color.SCRedColor));
@@ -86,7 +91,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         highlightsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (highlightsImageStore == null){
+                if (sCHighlightsStore == null) {
                     highlightsAPICall.execute();
                     showsButton.setBackgroundColor(getResources().getColor(R.color.SCGrayColor));
                     highlightsButton.setBackgroundColor(getResources().getColor(R.color.SCRedColor));
@@ -116,18 +121,23 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
 
-        showsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0DfIJarU3NrrTHvPmMkCjTd&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
-        highlightsEndpoint = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PL8dd-D6tYC0BeICQ2C3hym16jEyj0SzSJ&maxResults=5&key=AIzaSyCBgwbRkQjNIPraASVj7KxzN0HgoEWiuiI";
-
-        if (isNetworkEnabled(getContext()) && (sCShowsStore == null)) {
+        if (savedInstanceState != null) {
+            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
+            sCShowsStore = savedInstanceState.getParcelableArrayList(SHOWS_VIDEO_STORE);
+            if (savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE) != null) {
+                sCHighlightsStore = savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE);
+            } else {
+                highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
+            }
+        } else if (savedInstanceState == null && isNetworkEnabled(getContext())) {
+            Toast.makeText(getActivity(), "savedInstanceState == null", Toast.LENGTH_SHORT).show();
             showsAPICall = new YouTubeAPICall(showsEndpoint, this);
             showsAPICall.execute();
             highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
-
-
         } else {
-            Toast.makeText(getActivity(), "network not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Internet not available", Toast.LENGTH_SHORT).show();
         }
+
 
         return v;
     }
@@ -147,7 +157,12 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
-
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelableArrayList(SHOWS_VIDEO_STORE, sCShowsStore);
+        if (sCHighlightsStore != null) {
+            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
+            savedInstanceState.putParcelableArrayList(HIGHLIGHTS_VIDEO_STORE, sCHighlightsStore);
+        }
     }
 
     
@@ -167,7 +182,6 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             this.sCShowsStore = sCShowsStore;
             showsImageDownloader = new ShowsImageDownloader(sCShowsStore, this);
             showsImageDownloader.execute();
-            passVideo(sCShowsStore.get(0).getVideoID());
         } else {
             this.sCHighlightsStore = sCShowsStore;
             highlightImageDownloader = new HighlightImageDownloader(sCHighlightsStore, this);
@@ -185,21 +199,22 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     }
 
     @Override
-    public void onShowImageDownload(ArrayList<Bitmap> myBitmaps) {
-        this.showsImageStore = myBitmaps;
+    public void onShowImageDownload(ArrayList<SCVideo> sCShowVideos) {
+        this.sCShowsStore = sCShowVideos;
+        passVideo(sCShowsStore.get(0).getVideoID());
         showsUISetup();
     }
 
     @Override
-    public void onHighlightImageDownload(ArrayList<Bitmap> myBitmaps) {
-        this.highlightsImageStore = myBitmaps;
+    public void onHighlightImageDownload(ArrayList<SCVideo> sCHighlightVideos) {
+        this.sCHighlightsStore = sCHighlightVideos;
         highlightsUISetup();
     }
 
 
     private void showsUISetup() {
         if (showsAdapter == null) {
-            showsAdapter = new ShowsVideoAdapter(this.sCShowsStore, this.showsImageStore);
+            showsAdapter = new ShowsVideoAdapter(this.sCShowsStore);
             sCVideoRecyclerView.setAdapter(showsAdapter);
         } else {
             sCVideoRecyclerView.swapAdapter(showsAdapter, true);
@@ -208,7 +223,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
     private void highlightsUISetup() {
         if (highlightsAdapter == null) {
-            highlightsAdapter = new HighlightsVideoAdapter(this.sCHighlightsStore, this.highlightsImageStore);
+            highlightsAdapter = new HighlightsVideoAdapter(this.sCHighlightsStore);
             sCVideoRecyclerView.swapAdapter(highlightsAdapter, true);
         } else {
             sCVideoRecyclerView.swapAdapter(highlightsAdapter, true);
@@ -253,9 +268,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private class ShowsVideoAdapter extends RecyclerView.Adapter<VideoHolder> {
 
 
-        public ShowsVideoAdapter(ArrayList<SCVideo> videos, ArrayList<Bitmap> images) {
+        public ShowsVideoAdapter(ArrayList<SCVideo> videos) {
             sCShowsStore = videos;
-            showsImageStore = images;
         }
 
 
@@ -270,7 +284,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         @Override
         public void onBindViewHolder(VideoHolder holder, int position) {
             final SCVideo video = sCShowsStore.get(position);
-            Bitmap image = showsImageStore.get(position);
+            Bitmap image = sCShowsStore.get(position).getThumbnailBitmap();
 
             holder.rippleView.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
@@ -295,10 +309,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
     private class HighlightsVideoAdapter extends RecyclerView.Adapter<VideoHolder> {
 
-
-        public HighlightsVideoAdapter(ArrayList<SCVideo> videos, ArrayList<Bitmap> images) {
+        public HighlightsVideoAdapter(ArrayList<SCVideo> videos) {
             sCHighlightsStore = videos;
-            highlightsImageStore = images;
         }
 
 
@@ -313,7 +325,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         @Override
         public void onBindViewHolder(VideoHolder holder, int position) {
             final SCVideo video = sCHighlightsStore.get(position);
-            Bitmap image = highlightsImageStore.get(position);
+            Bitmap image = sCHighlightsStore.get(position).getThumbnailBitmap();
 
             holder.rippleView.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
@@ -344,7 +356,6 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             NetworkInfo networkInfo = manager.getActiveNetworkInfo();
             if (networkInfo != null) {
                 available = networkInfo.isAvailable();
-                Toast.makeText(context, "network is enabled", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(context, "network is not available", Toast.LENGTH_LONG).show();
             }
@@ -353,12 +364,17 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
 
     private void passVideo(String videoID) {
-        String videoToPass = videoID;
-        FragmentManager fragmentManager = getFragmentManager();
-        VideosFragment.YouTubePlayerFragment videosFragment = (VideosFragment.YouTubePlayerFragment) fragmentManager.findFragmentByTag("YOUTUBE_PLAYER_FRAGMENT");
 
-        if (videosFragment != null) {
-            videosFragment.onVideoSelected(videoToPass);
+        if (videoToPass != videoID) {
+            videoToPass = videoID;
+            FragmentManager fragmentManager = getFragmentManager();
+            VideosFragment.YouTubePlayerFragment videosFragment = (VideosFragment.YouTubePlayerFragment) fragmentManager.findFragmentByTag("YOUTUBE_PLAYER_FRAGMENT");
+
+            if (videosFragment != null) {
+                videosFragment.onVideoSelected(videoToPass);
+            }
         }
     }
+
+
 }

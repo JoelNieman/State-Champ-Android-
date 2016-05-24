@@ -1,7 +1,5 @@
 package app.com.joel.statechamps.Model.YouTube;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
 
 /**
@@ -9,6 +7,6 @@ import java.util.ArrayList;
  */
 public interface OnShowImageDownloadDelegate {
 
-    public void onShowImageDownload(ArrayList<Bitmap> myBitmap);
+    public void onShowImageDownload(ArrayList<SCVideo> sCVideos);
 }
 

@@ -51,6 +51,7 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
             videoListFragment = new VideoListFragment();
             FragmentTransaction transaction2 = fm.beginTransaction();
             transaction2.add(R.id.list_frame, videoListFragment).commit();
+            Log.d("VideosFragment", "Creating new VideoListFragment");
         }
 
 
@@ -95,10 +96,8 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
                     Log.d("Player onFullScreen", "False");
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
-
             }
         });
-
 
         if (!wasRestored) {
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
@@ -118,6 +117,11 @@ public class VideosFragment extends Fragment implements YouTubePlayer.OnInitiali
         youTubePlayer = null;
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle saveInstanceState){
+        fm.putFragment(saveInstanceState, "video List Fragment", videoListFragment);
+    }
 
 
     public static class YouTubePlayerFragment extends YouTubePlayerSupportFragment implements OnVideoSelectedDelegate {

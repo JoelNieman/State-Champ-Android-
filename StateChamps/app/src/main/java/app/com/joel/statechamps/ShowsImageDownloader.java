@@ -15,10 +15,9 @@ import app.com.joel.statechamps.Model.YouTube.SCVideo;
 /**
  * Created by Joel on 5/15/16.
  */
-public class ShowsImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap>> {
+public class ShowsImageDownloader extends AsyncTask<ArrayList<SCVideo>, Void, ArrayList<SCVideo>> {
 
     private ArrayList<SCVideo> videoArrayList;
-    private ArrayList<Bitmap> bitmapsArrayList;
     private OnShowImageDownloadDelegate handler;
     private Bitmap myBitmap;
 
@@ -28,9 +27,7 @@ public class ShowsImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap
 
     }
 
-    public ArrayList<Bitmap> doInBackground(Void... params) {
-        ArrayList<Bitmap> bitmapCollection = new ArrayList<>();
-
+    public ArrayList<SCVideo> doInBackground(ArrayList<SCVideo>... sCVideos) {
         for (int i = 0; i < videoArrayList.size(); i++) {
             try {
                 URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURL());
@@ -40,19 +37,19 @@ public class ShowsImageDownloader extends AsyncTask<Void, Void, ArrayList<Bitmap
                 InputStream input = connection.getInputStream();
                 myBitmap = BitmapFactory.decodeStream(input);
 
-                bitmapCollection.add(myBitmap);
+                videoArrayList.get(i).setThumbnailBitmap(myBitmap);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return bitmapCollection;
+        return videoArrayList;
     }
 
     @Override
-    public void onPostExecute(ArrayList<Bitmap> result) {
-        this.bitmapsArrayList = result;
-        this.handler.onShowImageDownload(bitmapsArrayList);
+    public void onPostExecute(ArrayList<SCVideo> sCVideos) {
+        this.videoArrayList = sCVideos;
+        this.handler.onShowImageDownload(videoArrayList);
     }
 }
 

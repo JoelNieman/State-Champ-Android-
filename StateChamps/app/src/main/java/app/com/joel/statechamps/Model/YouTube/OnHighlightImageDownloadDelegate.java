@@ -1,7 +1,5 @@
 package app.com.joel.statechamps.Model.YouTube;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
 
 /**
@@ -9,5 +7,5 @@ import java.util.ArrayList;
  */
 public interface OnHighlightImageDownloadDelegate {
 
-    public void onHighlightImageDownload(ArrayList<Bitmap> myBitmap);
+    public void onHighlightImageDownload(ArrayList<SCVideo> sCVideos);
 }

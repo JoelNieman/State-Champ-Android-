@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        if (viewPagerAdapter == null) {
+            viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        }
 
         viewPager.setAdapter(viewPagerAdapter);
         setSupportActionBar(toolbar);
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onResume: called");
 
         orientation = getRequestedOrientation();
-        Toast.makeText(this, "The orientation is " +orientation, Toast.LENGTH_SHORT).show();
 
         if (orientation == 1 && articles == null){
             toolbar.setTitle("Articles");
@@ -145,5 +145,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d("MainActivity", "onDestroy: MAIN ACTIVITY");
+    }
+
 
 }
