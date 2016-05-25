@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
         setSupportActionBar(toolbar);
     }
 

@@ -144,6 +144,5 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
         }
         return videoArray;
     }
-
 }
 

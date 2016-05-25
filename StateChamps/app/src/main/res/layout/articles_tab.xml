@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/thumbnail_image_view2"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        />
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_preview_container">
+
+
+
+            <FrameLayout
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="162%"
+                android:layout_alignParentTop="true">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/article_preview_frame"
+                    />
+
+
+            </FrameLayout>
+
+
+
+        </android.support.percent.PercentRelativeLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_list_frame"
+            android:layout_below="@id/article_preview_container"
+            />
 
 </RelativeLayout>

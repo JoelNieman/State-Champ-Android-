@@ -129,12 +129,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             } else {
                 highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
             }
-        } else if (savedInstanceState == null && isNetworkEnabled(getContext())) {
-            Toast.makeText(getActivity(), "savedInstanceState == null", Toast.LENGTH_SHORT).show();
-            showsAPICall = new YouTubeAPICall(showsEndpoint, this);
-            showsAPICall.execute();
-            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
-        } else {
+        } else  {
             Toast.makeText(getActivity(), "Internet not available", Toast.LENGTH_SHORT).show();
         }
 
@@ -146,6 +141,12 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     public void onStart() {
         super.onStart();
         Log.d("VideoListFragment", "onStart: called");
+
+        if (sCShowsStore == null && isNetworkEnabled(getContext())) {
+            showsAPICall = new YouTubeAPICall(showsEndpoint, this);
+            showsAPICall.execute();
+            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
+        }
     }
 
     @Override
@@ -375,6 +376,5 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             }
         }
     }
-
 
 }
