@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("MainActivity", "onCreateView: called");
 
+
+
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(viewPagerAdapter);
         setSupportActionBar(toolbar);
-
     }
 
     @Override
