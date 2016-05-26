@@ -37,7 +37,7 @@ import app.com.joel.statechamps.Tabs.VideosFragment;
 
 public class VideoListFragment extends Fragment implements APIOnResponseDelegate, OnShowImageDownloadDelegate, OnHighlightImageDownloadDelegate {
 
-    private static final String VIDEO_ID = "video_id";
+//    private static final String VIDEO_ID = "video_id";
     private static final String SHOWS_VIDEO_STORE = "shows_video_store";
     private static final String HIGHLIGHTS_VIDEO_STORE = "highlights_video_store";
 
@@ -54,9 +54,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private String highlightsEndpoint;
     private String videoToPass;
     private APIOnResponseDelegate handler;
-
+    private float screenDensity;
     private Bundle bundle;
-
     private Button showsButton;
     private Button highlightsButton;
 
@@ -125,12 +124,9 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             if (savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE) != null) {
                 sCHighlightsStore = savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE);
             } else {
-                highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
+                highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
             }
-        } else  {
-            Toast.makeText(getActivity(), "Internet not available", Toast.LENGTH_SHORT).show();
         }
-
 
         return v;
     }
@@ -140,10 +136,12 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         super.onStart();
         Log.d("VideoListFragment", "onStart: called");
 
+        screenDensity = getResources().getDisplayMetrics().density;
+
         if (sCShowsStore == null && isNetworkEnabled(getContext())) {
-            showsAPICall = new YouTubeAPICall(showsEndpoint, this);
+            showsAPICall = new YouTubeAPICall(showsEndpoint, this, screenDensity);
             showsAPICall.execute();
-            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this);
+            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
         }
     }
 
@@ -370,5 +368,4 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             }
         }
     }
-
 }

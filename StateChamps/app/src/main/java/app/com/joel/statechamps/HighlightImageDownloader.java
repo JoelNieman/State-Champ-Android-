@@ -27,7 +27,7 @@ public class HighlightImageDownloader extends AsyncTask<ArrayList<SCVideo>, Void
     public ArrayList<SCVideo> doInBackground(ArrayList<SCVideo>... params) {
         for (int i = 0; i < videoArrayList.size(); i++) {
             try {
-                URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURL());
+                URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURLString());
                 HttpURLConnection connection = (HttpURLConnection) urlConnection.openConnection();
                 connection.setDoInput(true);
                 connection.connect();

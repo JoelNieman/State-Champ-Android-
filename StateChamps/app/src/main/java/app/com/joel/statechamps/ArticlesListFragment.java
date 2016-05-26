@@ -28,6 +28,7 @@ import app.com.joel.statechamps.Model.YouTube.OnVideoSelectedDelegate;
  */
 public class ArticlesListFragment extends Fragment implements ParseQueryDelegate {
 
+    private static final String ARTICLES_LIST = "articles_list";
     private ArrayList<SCArticle> sCArticles;
     private ParseQueryDelegate handler;
     private ParseArticleQuery parseAPI;
@@ -40,6 +41,11 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.articles_list, container, false);
+
+        if (savedInstanceState != null) {
+            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
+            sCArticles = savedInstanceState.getParcelableArrayList(ARTICLES_LIST);
+        }
 
         sCLibrary = SCLibrary.get(getActivity(), this);
 
@@ -56,7 +62,6 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         parseImageDownloader = new ParseImageDownloader(sCArticles, this);
         parseImageDownloader.execute();
 
-
         Log.d("ArticlesFragment", "Article number 25: " + sCArticles.get(24).getTitle());
 
     }
@@ -67,6 +72,15 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         articlesAdapter = new ArticlesAdapter(this.sCArticles);
         sCArticlesRecyclerView.setAdapter(articlesAdapter);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        if (sCArticles != null) {
+            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
+            savedInstanceState.putParcelableArrayList(ARTICLES_LIST, sCArticles);
+        }
     }
 
 

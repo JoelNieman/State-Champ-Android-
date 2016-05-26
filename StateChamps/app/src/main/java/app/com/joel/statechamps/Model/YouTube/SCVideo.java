@@ -13,7 +13,7 @@ public class SCVideo implements Parcelable {
     private String title;
     private String publishedDate;
     private String videoID;
-    private String thumbnailURL;
+    private String thumbnailURLString;
     private Bitmap thumbnailBitmap;
 
     public SCVideo() {
@@ -45,12 +45,12 @@ public class SCVideo implements Parcelable {
         this.videoID = videoID;
     }
 
-    public String getThumbnailURL() {
-        return thumbnailURL;
+    public String getThumbnailURLString() {
+        return thumbnailURLString;
     }
 
-    public void setThumbnailURL(String thumbnailURL) {
-        this.thumbnailURL = thumbnailURL;
+    public void setThumbnailURLString(String thumbnailURLString) {
+        this.thumbnailURLString = thumbnailURLString;
     }
 
     public Bitmap getThumbnailBitmap() {
@@ -66,7 +66,7 @@ public class SCVideo implements Parcelable {
         title = in.readString();
         publishedDate = in.readString();
         videoID = in.readString();
-        thumbnailURL = in.readString();
+        thumbnailURLString = in.readString();
         thumbnailBitmap = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
     }
 
@@ -81,7 +81,7 @@ public class SCVideo implements Parcelable {
         dest.writeString(title);
         dest.writeString(publishedDate);
         dest.writeString(videoID);
-        dest.writeString(thumbnailURL);
+        dest.writeString(thumbnailURLString);
         dest.writeValue(thumbnailBitmap);
     }
 

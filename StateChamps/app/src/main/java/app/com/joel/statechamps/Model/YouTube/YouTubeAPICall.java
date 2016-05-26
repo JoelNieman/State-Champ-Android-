@@ -31,13 +31,15 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
     private JSONObject sCVideoJSONObject;
     private JSONArray sCVideoJSONArray;
     private String endpoint;
+    private float screenDensity;
 
 
 
 
-    public YouTubeAPICall(String endpoint, APIOnResponseDelegate handler) {
+    public YouTubeAPICall(String endpoint, APIOnResponseDelegate handler, float screenDensity) {
         this.endpoint = endpoint;
         this.handler = handler;
+        this.screenDensity = screenDensity;
         this.method = METHOD_GET;
     }
 
@@ -118,21 +120,35 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
                 sCVideoJSONObject = (JSONObject) sCVideoJSONArray.get(i);
                 JSONObject snippet = sCVideoJSONObject.optJSONObject("snippet");
                 JSONObject thumbnails = snippet.optJSONObject("thumbnails");
-                JSONObject defaultThumbnials = thumbnails.optJSONObject("default");
+
+                JSONObject defaultThumbnails = thumbnails.optJSONObject("default");
+                JSONObject mediumThumbnails = thumbnails.optJSONObject("medium");
+                JSONObject highThumbnails = thumbnails.optJSONObject("high");
+                JSONObject standardThumbnails = thumbnails.optJSONObject("standard");
+
                 JSONObject resourceId = snippet.optJSONObject("resourceId");
 
                 String title = snippet.optString("title");
                 String publishedDate = snippet.optString("publishedAt");
                 String videoID = resourceId.optString("videoId");
-                String thumbnailURLString = defaultThumbnials.optString("url");
+
+                String thumbnailURLString = null;
+
+                if (screenDensity >= 5.0){
+                    thumbnailURLString = standardThumbnails.optString("url");
+                } else if (screenDensity >= 4.0) {
+                    thumbnailURLString = highThumbnails.optString("url");
+                } else if (screenDensity >= 3.0) {
+                    thumbnailURLString = mediumThumbnails.optString("url");
+                } else {
+                    thumbnailURLString = defaultThumbnails.optString("url");
+                }
 
                 sCVideo.setTitle(title);
                 sCVideo.setPublishedDate(publishedDate);
                 sCVideo.setVideoID(videoID);
-                sCVideo.setThumbnailURL(thumbnailURLString);
-
+                sCVideo.setThumbnailURLString(thumbnailURLString);
                 videoArray.add(sCVideo);
-
 
                 System.out.println(sCVideo.getTitle());
 

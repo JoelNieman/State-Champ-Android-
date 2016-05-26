@@ -30,7 +30,7 @@ public class ShowsImageDownloader extends AsyncTask<ArrayList<SCVideo>, Void, Ar
     public ArrayList<SCVideo> doInBackground(ArrayList<SCVideo>... sCVideos) {
         for (int i = 0; i < videoArrayList.size(); i++) {
             try {
-                URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURL());
+                URL urlConnection = new URL(videoArrayList.get(i).getThumbnailURLString());
                 HttpURLConnection connection = (HttpURLConnection) urlConnection.openConnection();
                 connection.setDoInput(true);
                 connection.connect();
