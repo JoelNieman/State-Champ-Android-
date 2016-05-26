@@ -62,7 +62,7 @@ public class YouTubeAPICall extends AsyncTask <Void, Void, ArrayList<SCVideo>> {
     @Override
     protected void onPostExecute(ArrayList<SCVideo> sCVideoStore) {
         this.sCVideoStore = sCVideoStore;
-        this.handler.onShowVideoResponse(sCVideoStore);
+        this.handler.onVideoResponse(sCVideoStore);
     }
 
 

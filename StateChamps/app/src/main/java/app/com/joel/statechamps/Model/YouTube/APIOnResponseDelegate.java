@@ -8,9 +8,7 @@ import java.util.ArrayList;
 public interface APIOnResponseDelegate {
 
     public void onPreStart();
-    public void onShowVideoResponse(ArrayList<SCVideo> shows);
-    public void onHighlightVideoResponse(ArrayList<SCVideo> highlights);
-
+    public void onVideoResponse(ArrayList<SCVideo> videos);
 }
 
 

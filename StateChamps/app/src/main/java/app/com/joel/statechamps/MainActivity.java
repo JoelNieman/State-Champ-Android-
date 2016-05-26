@@ -65,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setTitle("Articles");
             toolbar.setTitleTextColor(getResources().getColor(R.color.WhiteColor));
 
-            tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
             tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.WhiteColor));
+            tabLayout.setSelectedTabIndicatorHeight(6);
+
 
             setUpTabs();
             handleTabs();

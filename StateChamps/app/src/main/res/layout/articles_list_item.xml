@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
@@ -7,31 +7,51 @@
     android:layout_height="wrap_content"
     android:id="@+id/article_list_view_cell" >
 
+
     <com.andexert.library.RippleView
         android:id="@+id/articles_ripple_view"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         app:rv_color="@color/SCBlueColor"
         app:rv_zoom="true"
         app:rv_zoomDuration="150"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         >
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/article_thumbnail_image_view"
-            android:padding="6dp"
-            />
+        <FrameLayout
+            android:layout_width="84dp"
+            android:layout_height="63dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:background="@color/BlackColor"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:id="@+id/article_thumbnail_frame">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/article_thumbnail_image_view"
+                />
+
+        </FrameLayout>
+
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/article_title"
-            android:layout_toRightOf="@id/article_thumbnail_image_view"
+            android:layout_toRightOf="@id/article_thumbnail_frame"
             android:padding="6dp"
             />
 
     </com.andexert.library.RippleView>
 
 
-</LinearLayout>
+</RelativeLayout>

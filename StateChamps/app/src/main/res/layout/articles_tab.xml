@@ -15,7 +15,7 @@
 
             <FrameLayout
                 app:layout_widthPercent="100%"
-                app:layout_aspectRatio="162%"
+                app:layout_aspectRatio="178%"
                 android:layout_alignParentTop="true">
 
                 <FrameLayout
@@ -27,7 +27,13 @@
 
             </FrameLayout>
 
-
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_below="@id/article_preview_container"
+                />
 
         </android.support.percent.PercentRelativeLayout>
 

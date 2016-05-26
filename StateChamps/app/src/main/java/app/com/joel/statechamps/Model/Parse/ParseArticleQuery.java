@@ -23,7 +23,7 @@ public class ParseArticleQuery {
         this.handler = handler;
     }
 
-    public void queryParseForArticles() {
+    public ArrayList<SCArticle> queryParseForArticles() {
         retrievedArticles = new ArrayList<SCArticle>();
 
         com.parse.ParseQuery<ParseObject> query = com.parse.ParseQuery.getQuery("Article");
@@ -70,6 +70,8 @@ public class ParseArticleQuery {
                 }
             }
         });
+
+        return retrievedArticles;
     }
 
 }

@@ -17,8 +17,10 @@ import com.andexert.library.RippleView;
 import java.util.ArrayList;
 
 import app.com.joel.statechamps.Model.Parse.ParseArticleQuery;
+import app.com.joel.statechamps.Model.Parse.ParseImageDownloader;
 import app.com.joel.statechamps.Model.Parse.ParseQueryDelegate;
 import app.com.joel.statechamps.Model.Parse.SCArticle;
+import app.com.joel.statechamps.Model.Parse.SCLibrary;
 import app.com.joel.statechamps.Model.YouTube.OnVideoSelectedDelegate;
 
 /**
@@ -29,14 +31,17 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
     private ArrayList<SCArticle> sCArticles;
     private ParseQueryDelegate handler;
     private ParseArticleQuery parseAPI;
+    private SCLibrary sCLibrary;
+
     private ArticlesAdapter articlesAdapter;
     private RecyclerView sCArticlesRecyclerView;
+    private ParseImageDownloader parseImageDownloader;
+//    private SCArticle article;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.articles_list, container, false);
 
-        parseAPI = new ParseArticleQuery(this);
-        parseAPI.queryParseForArticles();
+        sCLibrary = SCLibrary.get(getActivity(), this);
 
         sCArticlesRecyclerView = (RecyclerView) v.findViewById(R.id.articles_recycler_view);
         sCArticlesRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -48,9 +53,9 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
     @Override
     public void onArticlesResponse(ArrayList<SCArticle> articles) {
         this.sCArticles = articles;
+        parseImageDownloader = new ParseImageDownloader(sCArticles, this);
+        parseImageDownloader.execute();
 
-        articlesAdapter = new ArticlesAdapter(this.sCArticles);
-        sCArticlesRecyclerView.setAdapter(articlesAdapter);
 
         Log.d("ArticlesFragment", "Article number 25: " + sCArticles.get(24).getTitle());
 
@@ -59,6 +64,8 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
     @Override
     public void onImagesResponse(ArrayList<SCArticle> articlesWithImages) {
         this.sCArticles = articlesWithImages;
+        articlesAdapter = new ArticlesAdapter(this.sCArticles);
+        sCArticlesRecyclerView.setAdapter(articlesAdapter);
 
     }
 
@@ -86,9 +93,8 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         public void bindSCArticle(SCArticle article) {
             mSCArticle = article;
 
-
             mTitleTextView.setText(mSCArticle.getTitle());
-//            mImageView.setImageBitmap(mSCArticle.getImageBitmap());
+            mImageView.setImageBitmap(mSCArticle.getImageBitmap());
         }
 
     }

@@ -46,8 +46,6 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private HighlightsVideoAdapter highlightsAdapter;
     private ArrayList<SCVideo> sCShowsStore;
     private ArrayList<SCVideo> sCHighlightsStore;
-//    private ArrayList<Bitmap> showsImageStore;
-//    private ArrayList<Bitmap> highlightsImageStore;
     private ShowsImageDownloader showsImageDownloader;
     private HighlightImageDownloader highlightImageDownloader;
     private YouTubeAPICall showsAPICall;
@@ -178,26 +176,19 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
 
     @Override
-    public void onShowVideoResponse(ArrayList<SCVideo> sCShowsStore) {
+    public void onVideoResponse(ArrayList<SCVideo> videoStore) {
         if (highlightsButton.isEnabled()){
-            this.sCShowsStore = sCShowsStore;
+            this.sCShowsStore = videoStore;
             showsImageDownloader = new ShowsImageDownloader(sCShowsStore, this);
             showsImageDownloader.execute();
         } else {
-            this.sCHighlightsStore = sCShowsStore;
+            this.sCHighlightsStore = videoStore;
             highlightImageDownloader = new HighlightImageDownloader(sCHighlightsStore, this);
             highlightImageDownloader.execute();
         }
 
     }
 
-
-    @Override
-    public void onHighlightVideoResponse(ArrayList<SCVideo> highlights) {
-//        this.sCHighlightsStore = highlights;
-//        highlightImageDownloader = new HighlightImageDownloader(sCHighlightsStore, this);
-//        highlightImageDownloader.execute();
-    }
 
     @Override
     public void onShowImageDownload(ArrayList<SCVideo> sCShowVideos) {
@@ -252,6 +243,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             mTitleTextView = (TextView) itemView.findViewById(R.id.video_title);
             mImageView = (ImageView) itemView.findViewById(R.id.thumbnail_image_view);
 
+
+
         }
 
         public void bindSCVideo(SCVideo video, Bitmap image) {
@@ -260,6 +253,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
             mTitleTextView.setText(mSCVideo.getTitle());
             mImageView.setImageBitmap(mBitmap);
+
         }
 
     }

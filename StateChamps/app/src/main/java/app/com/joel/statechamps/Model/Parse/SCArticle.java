@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.parse.ParseFile;
 
 import java.net.URL;
+import java.util.UUID;
 
 /**
  * Created by Joel on 5/24/16.
@@ -16,12 +17,13 @@ public class SCArticle {
     private String body;
     private String sport;
     private URL articleURL;
-    private String imageString;
+    private String imageURLString;
     private Bitmap imageBitmap;
     private ParseFile imageFile;
+    private UUID Id;
 
     public SCArticle() {
-
+        Id = UUID.randomUUID();
     }
 
     public String getTitle() {
@@ -72,14 +74,6 @@ public class SCArticle {
         this.articleURL = articleURL;
     }
 
-    public String getImageString() {
-        return imageString;
-    }
-
-    public void setImageString(String imageString) {
-        this.imageString = imageString;
-    }
-
     public Bitmap getImageBitmap() {
         return imageBitmap;
     }
@@ -94,5 +88,18 @@ public class SCArticle {
 
     public void setImageFile(ParseFile imageFile) {
         this.imageFile = imageFile;
+    }
+
+
+    public String getImageURLString() {
+        return imageURLString;
+    }
+
+    public void setImageURLString(String imageURLString) {
+        this.imageURLString = imageURLString;
+    }
+
+    public UUID getId(){
+        return Id;
     }
 }
