@@ -58,6 +58,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private Bundle bundle;
     private Button showsButton;
     private Button highlightsButton;
+    private LinearLayoutManager layoutManager;
 
 
     @Override
@@ -113,9 +114,12 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         highlightsButton.setBackgroundColor(getResources().getColor(R.color.SCGrayColor));
         highlightsButton.setTextColor(getResources().getColor(R.color.WhiteColor));
 
+
+
         if (sCVideoRecyclerView == null) {
             sCVideoRecyclerView = (RecyclerView) v.findViewById(R.id.videos_recycler_view);
-            sCVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            layoutManager = new LinearLayoutManager(getActivity());
+            sCVideoRecyclerView.setLayoutManager(layoutManager);
         }
 
         if (savedInstanceState != null) {
@@ -275,13 +279,14 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         }
 
         @Override
-        public void onBindViewHolder(VideoHolder holder, int position) {
+        public void onBindViewHolder(VideoHolder holder, final int position) {
             final SCVideo video = sCShowsStore.get(position);
             Bitmap image = sCShowsStore.get(position).getThumbnailBitmap();
 
             holder.rippleView.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
                     passVideo(video.getVideoID());
+
                 }
             });
 
@@ -316,7 +321,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         }
 
         @Override
-        public void onBindViewHolder(VideoHolder holder, int position) {
+        public void onBindViewHolder(VideoHolder holder, final int position) {
             final SCVideo video = sCHighlightsStore.get(position);
             Bitmap image = sCHighlightsStore.get(position).getThumbnailBitmap();
 
