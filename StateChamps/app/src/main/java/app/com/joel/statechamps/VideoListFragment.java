@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -59,6 +60,8 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     private Button showsButton;
     private Button highlightsButton;
     private LinearLayoutManager layoutManager;
+    private SwipeRefreshLayout swipeRefresh;
+    private SwipeRefreshLayout.OnRefreshListener refreshListener;
 
 
     @Override
@@ -132,6 +135,29 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             }
         }
 
+        screenDensity = getResources().getDisplayMetrics().density;
+
+        swipeRefresh = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (highlightsButton.isEnabled()){
+                    showsAdapter.clear();
+                    YouTubeAPICall newShowsAPICall = new YouTubeAPICall(showsEndpoint, VideoListFragment.this , screenDensity);
+                    newShowsAPICall.execute();
+                    swipeRefresh.setRefreshing(true);
+
+                } else {
+                    if (highlightsAdapter != null){
+                        highlightsAdapter.clear();
+                        YouTubeAPICall newHighlightsAPICall = new YouTubeAPICall(showsEndpoint, VideoListFragment.this, screenDensity);
+                        newHighlightsAPICall.execute();
+                        swipeRefresh.setRefreshing(true);
+                    }
+                }
+            }
+        });
+
         return v;
     }
 
@@ -140,7 +166,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         super.onStart();
         Log.d("VideoListFragment", "onStart: called");
 
-        screenDensity = getResources().getDisplayMetrics().density;
+
 
         if (sCShowsStore == null && isNetworkEnabled(getContext())) {
             showsAPICall = new YouTubeAPICall(showsEndpoint, this, screenDensity);
@@ -196,6 +222,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     public void onShowImageDownload(ArrayList<SCVideo> sCShowVideos) {
         this.sCShowsStore = sCShowVideos;
         passVideo(sCShowsStore.get(0).getVideoID());
+        swipeRefresh.setRefreshing(false);
         showsUISetup();
     }
 
@@ -213,6 +240,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         } else {
             sCVideoRecyclerView.swapAdapter(showsAdapter, true);
         }
+        swipeRefresh.setRefreshing(false);
     }
 
     private void highlightsUISetup() {
@@ -222,7 +250,9 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         } else {
             sCVideoRecyclerView.swapAdapter(highlightsAdapter, true);
         }
+        swipeRefresh.setRefreshing(false);
     }
+
 
 
 
@@ -298,6 +328,18 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         public int getItemCount() {
             return sCShowsStore.size();
         }
+
+
+
+        public void clear(){
+            sCShowsStore.clear();
+            notifyDataSetChanged();
+        }
+
+        public void addAll(ArrayList<SCVideo> videos){
+            sCShowsStore.addAll(videos);
+            notifyDataSetChanged();
+        }
     }
 
 
@@ -338,6 +380,16 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         @Override
         public int getItemCount() {
             return sCHighlightsStore.size();
+        }
+
+        public void clear(){
+            sCHighlightsStore.clear();
+            notifyDataSetChanged();
+        }
+
+        public void addAll(ArrayList<SCVideo> videos){
+            sCHighlightsStore.addAll(videos);
+            notifyDataSetChanged();
         }
     }
 
