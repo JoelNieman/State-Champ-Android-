@@ -24,6 +24,8 @@ public class ParseArticleQuery {
     }
 
     public ArrayList<SCArticle> queryParseForArticles() {
+
+        Log.d("ParseArticleQuery", "This is a new Parse API call");
         retrievedArticles = new ArrayList<SCArticle>();
 
         com.parse.ParseQuery<ParseObject> query = com.parse.ParseQuery.getQuery("Article");

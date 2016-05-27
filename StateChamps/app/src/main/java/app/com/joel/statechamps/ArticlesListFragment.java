@@ -2,6 +2,7 @@ package app.com.joel.statechamps;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,7 +38,8 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
     private ArticlesAdapter articlesAdapter;
     private RecyclerView sCArticlesRecyclerView;
     private ParseImageDownloader parseImageDownloader;
-//    private SCArticle article;
+    private SwipeRefreshLayout swipeRefresh;
+    private SwipeRefreshLayout.OnRefreshListener refreshListener;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.articles_list, container, false);
@@ -51,6 +53,19 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
 
         sCArticlesRecyclerView = (RecyclerView) v.findViewById(R.id.articles_recycler_view);
         sCArticlesRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        swipeRefresh = (SwipeRefreshLayout) v.findViewById(R.id.articles_swipe_container);
+        swipeRefresh.setRefreshing(true);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                    articlesAdapter.clear();
+                    sCLibrary.makeNull();
+                    sCLibrary = SCLibrary.get(getActivity(), ArticlesListFragment.this);
+
+                    swipeRefresh.setRefreshing(true);
+            }
+        });
 
         Log.d("VideoListFragment", "onCreateView: called");
         return v;
@@ -71,6 +86,7 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         this.sCArticles = articlesWithImages;
         articlesAdapter = new ArticlesAdapter(this.sCArticles);
         sCArticlesRecyclerView.setAdapter(articlesAdapter);
+        swipeRefresh.setRefreshing(false);
 
     }
 
@@ -147,6 +163,11 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         @Override
         public int getItemCount() {
             return sCArticles.size();
+        }
+
+        public void clear(){
+            sCArticles.clear();
+            notifyDataSetChanged();
         }
     }
 }

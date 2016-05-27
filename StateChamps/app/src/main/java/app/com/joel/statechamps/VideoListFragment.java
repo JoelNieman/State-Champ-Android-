@@ -94,6 +94,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             public void onClick(View v) {
                 if (sCHighlightsStore == null) {
                     highlightsAPICall.execute();
+                    swipeRefresh.setRefreshing(true);
                     showsButton.setBackgroundColor(getResources().getColor(R.color.SCGrayColor));
                     highlightsButton.setBackgroundColor(getResources().getColor(R.color.SCRedColor));
                     showsButton.setClickable(true);
@@ -138,6 +139,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
         screenDensity = getResources().getDisplayMetrics().density;
 
         swipeRefresh = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        swipeRefresh.setRefreshing(true);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -150,7 +152,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
                 } else {
                     if (highlightsAdapter != null){
                         highlightsAdapter.clear();
-                        YouTubeAPICall newHighlightsAPICall = new YouTubeAPICall(showsEndpoint, VideoListFragment.this, screenDensity);
+                        YouTubeAPICall newHighlightsAPICall = new YouTubeAPICall(highlightsEndpoint, VideoListFragment.this, screenDensity);
                         newHighlightsAPICall.execute();
                         swipeRefresh.setRefreshing(true);
                     }
@@ -229,6 +231,7 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
     @Override
     public void onHighlightImageDownload(ArrayList<SCVideo> sCHighlightVideos) {
         this.sCHighlightsStore = sCHighlightVideos;
+        swipeRefresh.setRefreshing(false);
         highlightsUISetup();
     }
 
@@ -336,10 +339,10 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             notifyDataSetChanged();
         }
 
-        public void addAll(ArrayList<SCVideo> videos){
-            sCShowsStore.addAll(videos);
-            notifyDataSetChanged();
-        }
+//        public void addAll(ArrayList<SCVideo> videos){
+//            sCShowsStore.addAll(videos);
+//            notifyDataSetChanged();
+//        }
     }
 
 
@@ -387,10 +390,10 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             notifyDataSetChanged();
         }
 
-        public void addAll(ArrayList<SCVideo> videos){
-            sCHighlightsStore.addAll(videos);
-            notifyDataSetChanged();
-        }
+//        public void addAll(ArrayList<SCVideo> videos){
+//            sCHighlightsStore.addAll(videos);
+//            notifyDataSetChanged();
+//        }
     }
 
 

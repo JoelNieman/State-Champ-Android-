@@ -10,9 +10,9 @@ import java.util.UUID;
  */
 public class SCLibrary {
 
-    private static SCLibrary sCLibrary;
+    private static SCLibrary sCLibrary = null;
     private ArrayList<SCArticle> sCArticles;
-    private ParseArticleQuery parseQuery;
+//    private ParseArticleQuery parseQuery;
     private ParseQueryDelegate handler;
 
     public static SCLibrary get(Context context, ParseQueryDelegate handler){
@@ -26,7 +26,7 @@ public class SCLibrary {
         this.sCArticles = new ArrayList<>();
         this.handler = handler;
 
-        parseQuery = new ParseArticleQuery(handler);
+        ParseArticleQuery parseQuery = new ParseArticleQuery(handler);
         sCArticles = parseQuery.queryParseForArticles();
     }
 
@@ -41,5 +41,9 @@ public class SCLibrary {
             }
         }
         return null;
+    }
+
+    public void makeNull(){
+        sCLibrary = null;
     }
 }
