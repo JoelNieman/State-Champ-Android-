@@ -19,6 +19,8 @@
         android:paddingTop="6dp"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
         >
 
         <FrameLayout

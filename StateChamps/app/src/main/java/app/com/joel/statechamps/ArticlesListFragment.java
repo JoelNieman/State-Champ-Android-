@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.andexert.library.RippleView;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import app.com.joel.statechamps.Model.Parse.ArticleSelectedDelegate;
 import app.com.joel.statechamps.Model.Parse.ParseArticleQuery;
 import app.com.joel.statechamps.Model.Parse.ParseImageDownloader;
 import app.com.joel.statechamps.Model.Parse.ParseQueryDelegate;
@@ -40,6 +42,7 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
     private ParseImageDownloader parseImageDownloader;
     private SwipeRefreshLayout swipeRefresh;
     private SwipeRefreshLayout.OnRefreshListener refreshListener;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.articles_list, container, false);
@@ -132,6 +135,8 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
 
     private class ArticlesAdapter extends RecyclerView.Adapter<ArticleHolder> {
 
+        private ArticleSelectedDelegate articleHandler;
+
 
         public ArticlesAdapter(ArrayList<SCArticle> articles) {
             sCArticles = articles;
@@ -152,7 +157,6 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
 
             holder.rippleView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-//                    passVideo(video.getVideoID());
                 }
             });
 
@@ -168,6 +172,10 @@ public class ArticlesListFragment extends Fragment implements ParseQueryDelegate
         public void clear(){
             sCArticles.clear();
             notifyDataSetChanged();
+        }
+
+        public void articleSelected(UUID articleId){
+            articleHandler.onArticleSelected(articleId);
         }
     }
 }
