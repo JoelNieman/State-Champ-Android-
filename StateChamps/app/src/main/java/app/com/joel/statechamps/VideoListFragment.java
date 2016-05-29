@@ -126,15 +126,15 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
             sCVideoRecyclerView.setLayoutManager(layoutManager);
         }
 
-        if (savedInstanceState != null) {
-            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
-            sCShowsStore = savedInstanceState.getParcelableArrayList(SHOWS_VIDEO_STORE);
-            if (savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE) != null) {
-                sCHighlightsStore = savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE);
-            } else {
-                highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
-            }
-        }
+//        if (savedInstanceState != null) {
+//            Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
+//            sCShowsStore = savedInstanceState.getParcelableArrayList(SHOWS_VIDEO_STORE);
+//            if (savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE) != null) {
+//                sCHighlightsStore = savedInstanceState.getParcelableArrayList(HIGHLIGHTS_VIDEO_STORE);
+//            } else {
+//                highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
+//            }
+//        }
 
         screenDensity = getResources().getDisplayMetrics().density;
 
