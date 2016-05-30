@@ -1,48 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/article_preview_relative_layout"
     >
 
-        <android.support.percent.PercentRelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/article_preview_container">
-
-
-
-            <FrameLayout
-                app:layout_widthPercent="100%"
-                app:layout_aspectRatio="178%"
-                android:layout_alignParentTop="true">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/article_preview_frame"
-                    />
-
-
-            </FrameLayout>
-
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_below="@id/article_preview_container"
-                />
-
-        </android.support.percent.PercentRelativeLayout>
-
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/article_preview_container">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/article_list_frame"
-            android:layout_below="@id/article_preview_container"
-            />
+            app:layout_widthPercent="100%"
+            app:layout_aspectRatio="143.5%"
+            android:layout_alignParentTop="true">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/article_preview_frame"
+                />
+
+            <!--<ProgressBar-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/progressBar"-->
+            <!--style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
+            <!--android:layout_below="@id/article_preview_container"-->
+            <!--/>-->
+
+
+        </FrameLayout>
+    </android.support.percent.PercentRelativeLayout>
+
+    <LinearLayout
+
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/articles_linear_layout"
+        android:orientation="vertical"
+        android:layout_below="@id/article_preview_container"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:id="@+id/spacer_layout"
+            android:orientation="horizontal"
+            android:background="@color/SCRedColor"
+            android:layout_below="@id/article_preview_relative_layout">
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/articles_swipe_container">
+
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/articles_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 </RelativeLayout>

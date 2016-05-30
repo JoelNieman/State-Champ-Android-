@@ -170,11 +170,11 @@ public class VideoListFragment extends Fragment implements APIOnResponseDelegate
 
 
 
-        if (sCShowsStore == null && isNetworkEnabled(getContext())) {
-            showsAPICall = new YouTubeAPICall(showsEndpoint, this, screenDensity);
-            showsAPICall.execute();
-            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
-        }
+//        if (sCShowsStore == null && isNetworkEnabled(getContext())) {
+//            showsAPICall = new YouTubeAPICall(showsEndpoint, this, screenDensity);
+//            showsAPICall.execute();
+//            highlightsAPICall = new YouTubeAPICall(highlightsEndpoint, this, screenDensity);
+//        }
     }
 
     @Override

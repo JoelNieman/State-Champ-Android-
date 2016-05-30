@@ -23,6 +23,7 @@ import com.parse.Parse;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import app.com.joel.statechamps.ArticlePreviewFragment;
 import app.com.joel.statechamps.DefaultImage;
 import app.com.joel.statechamps.Model.Parse.ArticleSelectedDelegate;
 import app.com.joel.statechamps.Model.Parse.ParseArticleQuery;
@@ -38,6 +39,8 @@ import app.com.joel.statechamps.R;
  */
 public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
+    public static final String ARTICLE_TO_PASS = "article_to_pass";
+    public static final String ARTICLE_POSITION = "article_position";
 
     private FrameLayout articlePreviewFrame;
     private FragmentManager fm;
@@ -55,11 +58,13 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
     private ParseImageDownloader parseImageDownloader;
     private SwipeRefreshLayout swipeRefresh;
     private SwipeRefreshLayout.OnRefreshListener refreshListener;
+    private ArticlePreviewFragment articlePreviewFragment;
+    private ArticleSelectedDelegate articleHandler;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.articles_list, container, false);
+        View v = inflater.inflate(R.layout.articles_tab, container, false);
 
         Parse.initialize(getActivity(),"ix5mJYC2mshbbsOl7B0ykb3bNAvuku98jAsDfSRp", "SaLzyUYqPMJlK3bzrS5evi474f12kbrDsiX6i2ZB");
 
@@ -69,9 +74,6 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
         FragmentTransaction transaction1 = fm.beginTransaction();
         transaction1.replace(R.id.article_preview_frame, defaultImageFragment, "DEFAULT_IMAGE_FRAGMENT").commit();
 
-//        articlesListFragment = new ArticlesListFragment();
-//        FragmentTransaction transaction2 = fm.beginTransaction();
-//        transaction2.replace(R.id.article_list_frame, articlesListFragment, "ARTICLES_LIST_FRAGMENT").commit();
 
         if (savedInstanceState != null) {
             Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
@@ -174,7 +176,7 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
     private class ArticlesAdapter extends RecyclerView.Adapter<ArticleHolder> {
 
-        private ArticleSelectedDelegate articleHandler;
+
 
 
         public ArticlesAdapter(ArrayList<SCArticle> articles) {
@@ -191,11 +193,12 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
         }
 
         @Override
-        public void onBindViewHolder(ArticleHolder holder, int position) {
+        public void onBindViewHolder(ArticleHolder holder, final int position) {
             final SCArticle article = sCArticles.get(position);
 
             holder.rippleView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    articleSelected(article.getId());
                 }
             });
 
@@ -213,8 +216,25 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
             notifyDataSetChanged();
         }
 
-        public void articleSelected(UUID articleId){
-            articleHandler.onArticleSelected(articleId);
+    }
+
+    public void articleSelected(UUID articleId){
+
+
+        if (articlePreviewFragment == null){
+            Bundle args = new Bundle();
+            args.putSerializable(ARTICLE_TO_PASS, articleId);
+
+            articlePreviewFragment = new ArticlePreviewFragment();
+            articlePreviewFragment.setArguments(args);
+
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.replace(R.id.article_preview_frame, articlePreviewFragment, "ARTICLE_PREVIEW").commit();
+
+        } else {
+
+            articlePreviewFragment = (ArticlePreviewFragment) fm.findFragmentByTag("ARTICLE_PREVIEW");
+            articlePreviewFragment.onArticleSelected(articleId);
         }
     }
 

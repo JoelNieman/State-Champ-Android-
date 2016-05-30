@@ -46,4 +46,10 @@ public class SCLibrary {
     public void makeNull(){
         sCLibrary = null;
     }
+
+
+    public SCArticle getArticleAtPosition(int position){
+        SCArticle myArticle = sCArticles.get(position);
+        return myArticle;
+    }
 }
