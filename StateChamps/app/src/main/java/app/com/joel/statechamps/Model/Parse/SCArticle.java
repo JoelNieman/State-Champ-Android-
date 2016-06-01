@@ -114,7 +114,6 @@ public class SCArticle implements Parcelable {
         sport = in.readString();
         articleURL = (URL) in.readValue(URL.class.getClassLoader());
         imageURLString = in.readString();
-        imageBitmap = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
         Id = (UUID) in.readValue(UUID.class.getClassLoader());
     }
 
@@ -132,7 +131,6 @@ public class SCArticle implements Parcelable {
         dest.writeString(sport);
         dest.writeValue(articleURL);
         dest.writeString(imageURLString);
-        dest.writeValue(imageBitmap);
         dest.writeValue(Id);
     }
 

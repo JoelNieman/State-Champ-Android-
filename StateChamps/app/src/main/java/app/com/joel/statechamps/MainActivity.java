@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onCreateView: called");
 
 
-
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.viewpager);

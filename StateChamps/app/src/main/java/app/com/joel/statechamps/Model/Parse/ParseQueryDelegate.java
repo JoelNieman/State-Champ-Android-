@@ -1,5 +1,7 @@
 package app.com.joel.statechamps.Model.Parse;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 /**
@@ -9,4 +11,5 @@ public interface ParseQueryDelegate {
 
     public void onArticlesResponse(ArrayList<SCArticle> articles);
     public void onImagesResponse(ArrayList<SCArticle> articlesWithImages);
+    public void onImageResponse(Bitmap articleImage);
 }

@@ -1,5 +1,6 @@
 package app.com.joel.statechamps.Tabs;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,11 +22,9 @@ import com.andexert.library.RippleView;
 import com.parse.Parse;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import app.com.joel.statechamps.ArticlePreviewFragment;
 import app.com.joel.statechamps.DefaultImage;
-import app.com.joel.statechamps.Model.Parse.ArticleSelectedDelegate;
 import app.com.joel.statechamps.Model.Parse.ParseArticleQuery;
 import app.com.joel.statechamps.Model.Parse.ParseImageDownloader;
 import app.com.joel.statechamps.Model.Parse.ParseQueryDelegate;
@@ -59,14 +58,19 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
     private SwipeRefreshLayout swipeRefresh;
     private SwipeRefreshLayout.OnRefreshListener refreshListener;
     private ArticlePreviewFragment articlePreviewFragment;
-    private ArticleSelectedDelegate articleHandler;
+    private boolean parseInitialized;
+//    private ArticleSelectedDelegate articleHandler;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.articles_tab, container, false);
 
-        Parse.initialize(getActivity(),"ix5mJYC2mshbbsOl7B0ykb3bNAvuku98jAsDfSRp", "SaLzyUYqPMJlK3bzrS5evi474f12kbrDsiX6i2ZB");
+        if (!parseInitialized) {
+            Parse.initialize(getActivity(),"ix5mJYC2mshbbsOl7B0ykb3bNAvuku98jAsDfSRp", "SaLzyUYqPMJlK3bzrS5evi474f12kbrDsiX6i2ZB");
+        }
+
+        parseInitialized = true;
 
         fm = getChildFragmentManager();
 
@@ -135,6 +139,11 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
     }
 
     @Override
+    public void onImageResponse(Bitmap articleImage) {
+
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
         if (sCArticles != null) {
@@ -198,7 +207,7 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
             holder.rippleView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    articleSelected(article.getId());
+                    articleSelected(position);
                 }
             });
 
@@ -218,12 +227,12 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
     }
 
-    public void articleSelected(UUID articleId){
+    public void articleSelected(int position){
 
 
         if (articlePreviewFragment == null){
             Bundle args = new Bundle();
-            args.putSerializable(ARTICLE_TO_PASS, articleId);
+            args.putSerializable(ARTICLE_TO_PASS, position);
 
             articlePreviewFragment = new ArticlePreviewFragment();
             articlePreviewFragment.setArguments(args);
@@ -234,7 +243,7 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
         } else {
 
             articlePreviewFragment = (ArticlePreviewFragment) fm.findFragmentByTag("ARTICLE_PREVIEW");
-            articlePreviewFragment.onArticleSelected(articleId);
+            articlePreviewFragment.onArticleSelected(position);
         }
     }
 
