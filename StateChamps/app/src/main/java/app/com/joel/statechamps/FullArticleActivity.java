@@ -38,7 +38,7 @@ public class FullArticleActivity extends AppCompatActivity implements ParseQuery
         setContentView(R.layout.full_article);
 
         Bundle b = getIntent().getExtras();
-        articlePosition = b.getInt("article_to_pass");
+        articlePosition = b.getInt("passed_article_position");
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -68,6 +68,21 @@ public class FullArticleActivity extends AppCompatActivity implements ParseQuery
 
     }
 
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+////            case R.id.new_game:
+////                newGame();
+////                return true;
+////            case R.id.help:
+////                showHelp();
+////                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+
     @Override
     public void onArticlesResponse(ArrayList<SCArticle> articles) {
 
@@ -82,4 +97,7 @@ public class FullArticleActivity extends AppCompatActivity implements ParseQuery
     public void onImageResponse(Bitmap articleImage) {
 
     }
+
+
+
 }

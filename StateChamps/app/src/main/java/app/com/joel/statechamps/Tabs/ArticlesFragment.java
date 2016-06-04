@@ -39,7 +39,6 @@ import app.com.joel.statechamps.R;
 public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
     public static final String ARTICLE_TO_PASS = "article_to_pass";
-    public static final String ARTICLE_POSITION = "article_position";
 
     private FrameLayout articlePreviewFrame;
     private FragmentManager fm;
@@ -59,6 +58,7 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
     private SwipeRefreshLayout.OnRefreshListener refreshListener;
     private ArticlePreviewFragment articlePreviewFragment;
     private boolean parseInitialized;
+    private Bundle args;
 //    private ArticleSelectedDelegate articleHandler;
 
 
@@ -78,10 +78,14 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
         FragmentTransaction transaction1 = fm.beginTransaction();
         transaction1.replace(R.id.article_preview_frame, defaultImageFragment, "DEFAULT_IMAGE_FRAGMENT").commit();
 
+        if (args == null){
+            args = new Bundle();
+        }
 
         if (savedInstanceState != null) {
             Log.d("SAVED INSTANCE STATE", "onSaveInstanceState: called");
             sCArticles = savedInstanceState.getParcelableArrayList(ARTICLES_LIST);
+            args.remove(ARTICLE_TO_PASS);
         }
 
         sCLibrary = SCLibrary.get(getActivity(), this);
@@ -231,17 +235,17 @@ public class ArticlesFragment extends Fragment implements ParseQueryDelegate {
 
 
         if (articlePreviewFragment == null){
-            Bundle args = new Bundle();
             args.putSerializable(ARTICLE_TO_PASS, position);
 
-            articlePreviewFragment = new ArticlePreviewFragment();
+            if (articlePreviewFragment == null){
+                articlePreviewFragment = new ArticlePreviewFragment();
+            }
             articlePreviewFragment.setArguments(args);
 
             FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.article_preview_frame, articlePreviewFragment, "ARTICLE_PREVIEW").commit();
 
         } else {
-
             articlePreviewFragment = (ArticlePreviewFragment) fm.findFragmentByTag("ARTICLE_PREVIEW");
             articlePreviewFragment.onArticleSelected(position);
         }
